@@ -27,7 +27,7 @@ public:
 
 private:
 	int_type underflow() override {
-		if (PHYSFS_eof(file)) {
+		if (!file || PHYSFS_eof(file)) {
 			return traits_type::eof();
 		}
 
@@ -36,59 +36,79 @@ private:
 			return traits_type::eof();
 
 		setg(buffer, buffer, buffer + static_cast<size_t>(bytesRead));
-		return static_cast<int_type>(*gptr());
+		return static_cast<int_type>(static_cast<unsigned char>(*gptr()));
 	}
 
 	pos_type seekoff(off_type pos, ios_base::seekdir dir, ios_base::openmode mode) override {
+		if (!file) return pos_type(-1);
+
 		switch (dir) {
 		case std::ios_base::beg:
-			PHYSFS_seek(file, pos);
+			PHYSFS_seek(file, static_cast<PHYSFS_uint64>(pos));
 			break;
-		case std::ios_base::cur:
-			// Subtract characters currently in buffer from seek position.
-			PHYSFS_seek(file, (PHYSFS_tell(file) + pos) - (egptr() - gptr()));
+		case std::ios_base::cur: {
+			auto current = static_cast<PHYSFS_uint64>(PHYSFS_tell(file));
+			auto adjust = static_cast<off_type>(egptr() - gptr());
+			PHYSFS_seek(file, static_cast<PHYSFS_uint64>(current + pos - adjust));
 			break;
+		}
 		case std::ios_base::end:
-			PHYSFS_seek(file, PHYSFS_fileLength(file) + pos);
+			PHYSFS_seek(file, static_cast<PHYSFS_uint64>(PHYSFS_fileLength(file) + pos));
 			break;
 		}
 
 		if (mode & std::ios_base::in)
 			setg(egptr(), egptr(), egptr());
 		if (mode & std::ios_base::out)
-			setp(buffer, buffer);
+			setp(buffer, buffer + bufferSize);
 
-		return PHYSFS_tell(file);
+		return static_cast<pos_type>(PHYSFS_tell(file));
 	}
 
 	pos_type seekpos(pos_type pos, std::ios_base::openmode mode) override {
-		PHYSFS_seek(file, pos);
+		if (!file) return pos_type(-1);
+
+		PHYSFS_seek(file, static_cast<PHYSFS_uint64>(pos));
 
 		if (mode & std::ios_base::in)
 			setg(egptr(), egptr(), egptr());
 		if (mode & std::ios_base::out)
-			setp(buffer, buffer);
+			setp(buffer, buffer + bufferSize);
 
-		return PHYSFS_tell(file);
+		return static_cast<pos_type>(PHYSFS_tell(file));
 	}
 
 	int_type overflow(int_type c = traits_type::eof()) override {
-		if (pptr() == pbase() && c == traits_type::eof())
-			return 0; // no-op
-
-		if (PHYSFS_writeBytes(file, pbase(), static_cast<PHYSFS_uint32>(pptr() - pbase())) < 1)
+		if (!file)
 			return traits_type::eof();
 
-		if (c != traits_type::eof()) {
-			if (PHYSFS_writeBytes(file, &c, 1) < 1)
+		// Nothing to write and no char provided -> success (no-op)
+		if (pptr() == pbase() && c == traits_type::eof())
+			return traits_type::not_eof(c);
+
+		// Write buffered bytes
+		auto toWrite = static_cast<PHYSFS_uint32>(pptr() - pbase());
+		if (toWrite > 0) {
+			if (PHYSFS_writeBytes(file, pbase(), toWrite) < 1)
 				return traits_type::eof();
 		}
 
-		return 0;
+		// reset put area
+		setp(buffer, buffer + bufferSize);
+
+		// If a character is provided, write it as a single byte.
+		if (c != traits_type::eof()) {
+			char ch = traits_type::to_char_type(c);
+			if (PHYSFS_writeBytes(file, &ch, 1) < 1)
+				return traits_type::eof();
+		}
+
+		return traits_type::not_eof(c);
 	}
 
 	int sync() override {
-		return overflow();
+		// Return 0 on success, -1 on failure (std::streambuf convention)
+		return (overflow() == traits_type::eof()) ? -1 : 0;
 	}
 
 	char *buffer;
