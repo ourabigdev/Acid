@@ -15,6 +15,7 @@ add_subdirectory(TestMaths)
 add_subdirectory(TestNetwork)
 add_subdirectory(TestPacker)
 add_subdirectory(TestPBR)
+add_subdirectory(TestBase)
 add_subdirectory(TestPhysics)
 add_subdirectory(TestSerial)
 
