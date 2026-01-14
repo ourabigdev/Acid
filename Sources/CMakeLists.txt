@@ -21,27 +21,17 @@ include(FindSSE)
 find_package(OpenALSoft QUIET)
 find_package(OpenAL QUIET)
 
-if(OPENALSOFT_FOUND)
-    if(NOT TARGET OpenAL::OpenAL)
-        add_library(OpenAL::OpenAL UNKNOWN IMPORTED)
-        set_target_properties(OpenAL::OpenAL PROPERTIES
-            IMPORTED_LOCATION "${OPENALSOFT_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${OPENALSOFT_INCLUDE_DIR}"
-        )
-    endif()
-
-elseif(OPENAL_FOUND)
-    # IMPORTANT: OpenAL usually already defines OpenAL::OpenAL
-    if(NOT TARGET OpenAL::OpenAL)
-        add_library(OpenAL::OpenAL UNKNOWN IMPORTED)
-        set_target_properties(OpenAL::OpenAL PROPERTIES
-            IMPORTED_LOCATION "${OPENAL_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${OPENAL_INCLUDE_DIR}"
-        )
-    endif()
-
+find_package(OpenAL)
+if(OPENAL_FOUND)
+	if(OPENAL_FOUND AND NOT TARGET OpenAL::OpenAL)
+		add_library(OpenAL::OpenAL UNKNOWN IMPORTED)
+		set_target_properties(OpenAL::OpenAL PROPERTIES
+				IMPORTED_LOCATION "${OPENAL_LIBRARY}"
+				INTERFACE_INCLUDE_DIRECTORIES "${OPENAL_INCLUDE_DIR}"
+				)
+	endif()
 else()
-    message(FATAL_ERROR "Could not find OpenAL or OpenAL-Soft")
+	message(FATAL_ERROR "Could not find OpenAL or OpenAL-Soft")
 endif()
 
 
