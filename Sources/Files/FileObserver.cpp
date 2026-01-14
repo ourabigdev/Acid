@@ -1,14 +1,25 @@
 #include "FileObserver.hpp"
 
 namespace acid {
-FileObserver::FileObserver(std::filesystem::path path, const Time &delay) :
-	path(std::move(path)),
+FileObserver::FileObserver(std::filesystem::path p, const Time &delay) :
+	path(std::move(p)),
 	delay(delay),
-	running(true),
-	thread(&FileObserver::QueueLoop, this) {
+	running(true)
+{
+	// populate initial snapshot without the worker running
 	DoWithFilesInPath([this](const std::filesystem::path &file) {
-		paths[file.string()] = std::filesystem::last_write_time(file);
+		std::error_code ec;
+		auto t = std::filesystem::last_write_time(file, ec);
+		if (!ec) {
+			std::lock_guard<std::mutex> lock(pathsMutex);
+			paths[file.string()] = t;
+		} else {
+			// file disappeared or inaccessible — skip safely
+		}
 	});
+
+	// Now start the background thread after initial population
+	thread = std::thread(&FileObserver::QueueLoop, this);
 }
 
 FileObserver::~FileObserver() {

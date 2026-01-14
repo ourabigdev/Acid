@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <unordered_map>
 #include <thread>
+#include <mutex>
 
 #include <rocket.hpp>
 
@@ -52,5 +53,6 @@ private:
 	bool running;
 	std::thread thread;
 	std::unordered_map<std::string, std::filesystem::file_time_type> paths;
+	std::mutex pathsMutex;
 };
 }

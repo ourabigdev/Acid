@@ -2928,9 +2928,7 @@ namespace rocket
                 }
             }
 
-            timed_connection* make_link(connection_base* l, slot_type slot,
-                std::chrono::time_point<std::chrono::steady_clock> expires_at,
-                std::chrono::microseconds interval)
+            timed_connection* make_link(connection_base* l, slot_type slot, std::chrono::time_point<std::chrono::steady_clock> expires_at, std::chrono::microseconds interval)
             {
                 intrusive_ptr<timed_connection> link{ new timed_connection };
                 link->slot = std::move(slot);
@@ -3133,7 +3131,9 @@ namespace rocket
     template <auto Method, class Rep = unsigned long, class Period = std::milli>
     inline connection set_timeout(std::chrono::duration<Rep, Period> const& timeout)
     {
-        return detail::get_timer_queue()->template set_timeout<Method, Rep, Period>(timeout);
+        return set_timeout<Rep, Period>([] {
+            (*Method)();
+        }, timeout);
     }
 
     template <class Instance, class Class, class R, class Rep = unsigned long, class Period = std::milli>
@@ -3437,7 +3437,7 @@ namespace rocket
         }
 
         template <class Instance, class Class, class R1, class... Args1>
-        connection connect(Instance& object, R1(Class::*method)(Args1...), connection_flags flags = direct_connection)
+        connection connect(Instance& object, R1(Class::*method)(), connection_flags flags = direct_connection)
         {
             connection c{
                 connect([&object, method](Args const&... args) {
@@ -3465,7 +3465,7 @@ namespace rocket
         }
 
         template <class Instance, class Class, class R1, class... Args1>
-        connection connect(Instance* object, R1(Class::*method)(Args1...), connection_flags flags = direct_connection)
+        connection connect(Instance* object, R1(Class::*method)(), connection_flags flags = direct_connection)
         {
             connection c{
                 connect([object, method](Args const&... args) {

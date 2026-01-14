@@ -71,11 +71,12 @@ Scene1::Scene1() :
 
 	Inputs::Get()->GetButton("spawnSphere")->OnButton().connect(this, [this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {
+			Vector3 pos(0.0f, 0.0f, 3.0f);
 			auto cameraPosition = GetCamera()->GetPosition();
 			auto cameraRotation = GetCamera()->GetRotation();
 
 			auto sphere = CreateEntity();
-			sphere->AddComponent<Transform>(cameraPosition, Vector3f());
+			sphere->AddComponent<Transform>(cameraPosition + pos, Vector3f());
 			sphere->AddComponent<Mesh>(SphereModel::Create(0.5f, 32, 32), 
 				std::make_unique<DefaultMaterial>(Colour::White, nullptr, 0.0f, 1.0f));
 			auto rigidbody = sphere->AddComponent<Rigidbody>(std::make_unique<SphereCollider>(), 0.5f);
