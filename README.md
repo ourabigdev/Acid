@@ -1,10 +1,5 @@
 <img src="Documents/Acid_03.png" alt="Acid" height="130px">
 
-[![Documentation](https://img.shields.io/badge/documentation-master-brightgreen.svg)](https://equilibrium.games/Acid/annotated.html)
-[![Linux Clang](https://github.com/EQMG/Acid/workflows/linux_clang/badge.svg)](https://github.com/EQMG/Acid/actions?query=workflow%linux_clang)
-[![Linux GCC](https://github.com/EQMG/Acid/workflows/linux_gcc/badge.svg)](https://github.com/EQMG/Acid/actions?query=workflow%linux_gcc)
-[![Windows MSVC](https://github.com/EQMG/Acid/workflows/windows_msvc/badge.svg)](https://github.com/EQMG/Acid/actions?query=workflow%3Awindows_msvc)
-[![macOS Clang](https://github.com/EQMG/Acid/workflows/macos_clang/badge.svg)](https://github.com/EQMG/Acid/actions?query=workflow%macos_clang)
 
 Acid is an open-source, cross-platform game engine written in modern C++17 and structured to be fast, simple, and extremely modular.
 
@@ -111,7 +106,7 @@ Timers::Get()->Repeat([]() {
 <img src="Documents/Screenshot5.png" alt="Acid" width="600px">
 
 ## Compiling
-All platforms depend on [CMake](https://cmake.org/download), 3.11.0 or higher, to generate IDE/make files.
+All platforms depend on [CMake](https://cmake.org/download), 4.0.0 or higher, to generate IDE/make files.
 
 CMake options (default ON):
 * `BUILD_TESTS`
