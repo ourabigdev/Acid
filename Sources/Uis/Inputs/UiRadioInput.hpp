@@ -69,7 +69,7 @@ public:
 	void AddInput(UiRadioInput *input) {
 		inputs.emplace_back(input);
 		input->SetType(type);
-		input->OnValue().connect(this, [this, input](bool value) {
+		input->OnValue().connect([this, input](bool value) {
 			if (!multiple) {
 				for (auto &input2 : inputs) {
 					if (input2 != input) {

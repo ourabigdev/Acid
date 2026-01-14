@@ -3,7 +3,7 @@
 namespace acid {
 MouseInputAxis::MouseInputAxis(uint8_t axis) :
 	axis(axis) {
-	Windows::Get()->GetWindow(0)->OnMousePosition().connect(this, [this](Vector2d value) {
+	Windows::Get()->GetWindow(0)->OnMousePosition().connect([this](Vector2d value) {
 		onAxis(GetAmount());
 	});
 }

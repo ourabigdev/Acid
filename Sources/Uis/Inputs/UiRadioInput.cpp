@@ -23,11 +23,11 @@ UiRadioInput::UiRadioInput() {
 	AddChild(&title);
 	
 	SetCursorHover(std::make_unique<Cursor>(CursorStandard::Hand));
-	OnSelected().connect(this, [this](bool selected) {
+	OnSelected().connect(std::function<void(bool)>([this](bool selected) {
 		background.SetColourDriver<SlideDriver>(background.GetColourDriver()->Get(),
 			selected ? UiButtonInput::SelectedColour : UiButtonInput::PrimaryColour, UiButtonInput::SlideTime);
-	});
-	OnClick().connect(this, [this](MouseButton button) {
+	}));
+	OnClick().connect(std::function<void(MouseButton)>([this](MouseButton button) {
 		if (button == MouseButton::Left) {
 			CancelEvent(MouseButton::Left);
 
@@ -35,7 +35,7 @@ UiRadioInput::UiRadioInput() {
 			UpdateValue();
 			onValue(value);
 		}
-	});
+	}));
 	UpdateValue();
 }
 

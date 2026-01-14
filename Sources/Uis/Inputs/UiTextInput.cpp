@@ -27,7 +27,7 @@ UiTextInput::UiTextInput() {
 	AddChild(&textValue);
 
 	SetCursorHover(std::make_unique<Cursor>(CursorStandard::Hand));
-	Windows::Get()->GetWindow(0)->OnKey().connect(this, [this](Key key, InputAction action, bitmask::bitmask<InputMod> mods) {
+	Windows::Get()->GetWindow(0)->OnKey().connect(std::function<void(Key, InputAction, bitmask::bitmask<InputMod>)>([this](Key key, InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (!updating)
 			return;
 
@@ -44,8 +44,8 @@ UiTextInput::UiTextInput() {
 			inputDelay.Update(true);
 			SetUpdating(false);
 		}
-	});
-	Windows::Get()->GetWindow(0)->OnChar().connect(this, [this](char c) {
+	}));
+	Windows::Get()->GetWindow(0)->OnChar().connect(std::function<void(char)>([this](char c) {
 		if (!updating)
 			return;
 
@@ -62,7 +62,7 @@ UiTextInput::UiTextInput() {
 			inputDelay.Update(false);
 			lastKey = 0;
 		}
-	});
+	}));
 }
 
 void UiTextInput::UpdateObject() {

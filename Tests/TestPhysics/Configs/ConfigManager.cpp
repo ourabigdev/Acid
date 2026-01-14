@@ -24,7 +24,7 @@ void ConfigManager::Load() {
 	Audio::Get()->SetGain(Audio::Type::Music, audioData["musicVolume"].GetWithFallback<float>(1.0f));
 
 	graphics.Load();
-	Windows::Get()->OnAddWindow().connect(this, [this](Window *window, bool added) {
+	Windows::Get()->OnAddWindow().connect([this](Window *window, bool added) {
 		auto &graphicsData = graphics.GetNode();
 		//Renderer::Get()->SetAntialiasing(graphicsData["antialiasing"].GetWithFallback<bool>(true));
 		window->SetSize(graphicsData["size"].GetWithFallback<Vector2f>(Vector2i(1080, 720)));

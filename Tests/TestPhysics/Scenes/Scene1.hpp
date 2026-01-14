@@ -7,7 +7,7 @@
 using namespace acid;
 
 namespace test {
-class Scene1 : public Scene {
+class Scene1 : public Scene, public rocket::trackable {
 public:
 	Scene1();
 

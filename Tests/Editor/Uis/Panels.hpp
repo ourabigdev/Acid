@@ -6,8 +6,8 @@
 using namespace acid;
 
 namespace test {
-class Panels : public UiObject {
-public:
+	class Panels : public UiObject, public rocket::trackable{
+	public:
 	Panels();
 
 	void UpdateObject() override;

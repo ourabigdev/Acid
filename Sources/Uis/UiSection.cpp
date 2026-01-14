@@ -13,7 +13,7 @@ UiSection::UiSection() {
 	
 	UiObject::AddChild(&content);
 
-	OnClick().connect(this, [this](MouseButton button) {
+	OnClick().connect([this](MouseButton button) {
 		if (button == MouseButton::Left) {
 			CancelEvent(MouseButton::Left);
 

@@ -50,7 +50,7 @@ bool JoystickHatInput::IsDown() const {
 void JoystickHatInput::SetPort(JoystickPort port) {
 	joystick = Joysticks::Get()->GetJoystick(port);
 	disconnect_tracked_connections();
-	joystick->OnHat().connect(static_cast<InputButton *>(this), [this](JoystickHat hat, bitmask::bitmask<JoystickHatValue> value) {
+	joystick->OnHat().connect([this](JoystickHat hat, bitmask::bitmask<JoystickHatValue> value) {
 		if (this->hat == hat) {
 			onAxis(GetAmount());
 			auto isDown = IsDown();

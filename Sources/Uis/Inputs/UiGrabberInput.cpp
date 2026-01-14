@@ -62,7 +62,7 @@ void UiGrabberInput::UpdateValue() {
 UiGrabberJoystick::UiGrabberJoystick() {
 	UpdateValue();
 
-	Joysticks::Get()->GetJoystick(port)->OnButton().connect(this, [this](uint32_t button, InputAction action) {
+	Joysticks::Get()->GetJoystick(port)->OnButton().connect(std::function<void(uint8_t, InputAction)>([this](uint8_t button, InputAction action) {
 		if (!updating)
 			return;
 
@@ -70,7 +70,7 @@ UiGrabberJoystick::UiGrabberJoystick() {
 		onValue(port, value);
 		SetUpdating(false);
 		UpdateValue();
-	});
+	}));
 }
 
 void UiGrabberJoystick::SetValue(uint32_t value) {
@@ -82,7 +82,7 @@ void UiGrabberJoystick::SetValue(uint32_t value) {
 UiGrabberKeyboard::UiGrabberKeyboard() {
 	UpdateValue();
 
-	Windows::Get()->GetWindow(0)->OnKey().connect(this, [this](Key key, InputAction action, bitmask::bitmask<InputMod> mods) {
+	Windows::Get()->GetWindow(0)->OnKey().connect(std::function<void(Key, InputAction, bitmask::bitmask<InputMod>)>([this](Key key, InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (!updating)
 			return;
 
@@ -90,7 +90,7 @@ UiGrabberKeyboard::UiGrabberKeyboard() {
 		onValue(value);
 		SetUpdating(false);
 		UpdateValue();
-	});
+	}));
 }
 
 void UiGrabberKeyboard::SetValue(Key value) {
@@ -102,7 +102,7 @@ void UiGrabberKeyboard::SetValue(Key value) {
 UiGrabberMouse::UiGrabberMouse() {
 	UpdateValue();
 
-	Windows::Get()->GetWindow(0)->OnMouseButton().connect(this, [this](MouseButton button, InputAction action, bitmask::bitmask<InputMod> mods) {
+	Windows::Get()->GetWindow(0)->OnMouseButton().connect(std::function<void(MouseButton, InputAction, bitmask::bitmask<InputMod>)>([this](MouseButton button, InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (!updating || action != InputAction::Press)
 			return;
 
@@ -119,7 +119,7 @@ UiGrabberMouse::UiGrabberMouse() {
 		onValue(value);
 		SetUpdating(false);
 		UpdateValue();
-	});
+	}));
 }
 
 void UiGrabberMouse::SetValue(MouseButton value) {

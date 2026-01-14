@@ -55,7 +55,7 @@ Scene1::Scene1() :
 	
 	//uiStartLogo.SetTransform({UiMargins::All});
 	uiStartLogo.SetAlphaDriver<ConstantDriver>(1.0f);
-	uiStartLogo.OnFinished().connect(this, [this]() {
+	uiStartLogo.OnFinished().connect([this]() {
 		overlayDebug.SetAlphaDriver<SlideDriver>(0.0f, 1.0f, UI_SLIDE_TIME);
 		Windows::Get()->GetWindow(0)->SetCursorHidden(true);
 	});
@@ -69,7 +69,7 @@ Scene1::Scene1() :
 	overlayDebug.SetAlphaDriver<ConstantDriver>(0.0f);
 	Uis::Get()->GetCanvas().AddChild(&overlayDebug);
 
-	Inputs::Get()->GetButton("spawnSphere")->OnButton().connect(this, [this](InputAction action, bitmask::bitmask<InputMod> mods) {
+	Inputs::Get()->GetButton("spawnSphere")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {
 			Vector3 pos(0.0f, 0.0f, 3.0f);
 			auto cameraPosition = GetCamera()->GetPosition();
@@ -91,13 +91,13 @@ Scene1::Scene1() :
 		}
 	});
 
-	Inputs::Get()->GetButton("captureMouse")->OnButton().connect(this, [this](InputAction action, bitmask::bitmask<InputMod> mods) {
+	Inputs::Get()->GetButton("captureMouse")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {
 			Windows::Get()->GetWindow(0)->SetCursorHidden(!Windows::Get()->GetWindow(0)->IsCursorHidden());
 		}
 	});
 
-	Inputs::Get()->GetButton("save")->OnButton().connect(this, [this](InputAction action, bitmask::bitmask<InputMod> mods) {
+	Inputs::Get()->GetButton("save")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {
 			Resources::Get()->GetThreadPool().Enqueue([this]() {
 				File sceneFile("Scene1.json", std::make_unique<Json>());
@@ -123,16 +123,16 @@ Scene1::Scene1() :
 		}
 	});
 
-	Windows::Get()->OnMonitorConnect().connect(this, [](Monitor *monitor, bool connected) {
+	Windows::Get()->OnMonitorConnect().connect([](Monitor *monitor, bool connected) {
 		Log::Out("Monitor ", std::quoted(monitor->GetName()), " action: ", connected, '\n');
 	});
-	Windows::Get()->GetWindow(0)->OnClose().connect(this, []() {
+	Windows::Get()->GetWindow(0)->OnClose().connect([]() {
 		Log::Out("Window has closed!\n");
 	});
-	Windows::Get()->GetWindow(0)->OnIconify().connect(this, [](bool iconified) {
+	Windows::Get()->GetWindow(0)->OnIconify().connect([](bool iconified) {
 		Log::Out("Iconified: ", iconified, '\n');
 	});
-	Windows::Get()->GetWindow(0)->OnDrop().connect(this, [](std::vector<std::string> paths) {
+	Windows::Get()->GetWindow(0)->OnDrop().connect([](std::vector<std::string> paths) {
 		for (const auto &path : paths) {
 			Log::Out("File dropped on window: ", path, '\n');
 		}

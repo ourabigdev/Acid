@@ -3,11 +3,11 @@
 namespace acid {
 KeyboardInputButton::KeyboardInputButton(Key key) :
 	key(key) {
-	Windows::Get()->GetWindow(0)->OnKey().connect(this, [this](Key key, InputAction action, bitmask::bitmask<InputMod> mods) {
+	Windows::Get()->GetWindow(0)->OnKey().connect(std::function<void(Key, InputAction, bitmask::bitmask<InputMod>)>([this](Key key, InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (this->key == key) {
 			onButton(action, mods);
 		}
-	});
+	}));
 }
 
 bool KeyboardInputButton::IsDown() const {

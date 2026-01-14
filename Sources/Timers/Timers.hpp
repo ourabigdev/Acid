@@ -49,7 +49,7 @@ public:
 	Timer *Once(Instance *object, std::function<void()> &&function, const Time &delay) {
 		std::unique_lock<std::mutex> lock(mutex);
 		auto &instance = timers.emplace_back(std::make_unique<Timer>(delay, 1));
-		instance->onTick.connect(object, std::move(function));
+		instance->onTick.connect(std::move(function));
 		condition.notify_all();
 		return instance.get();
 	}
@@ -58,7 +58,7 @@ public:
 	Timer *Every(Instance *object, std::function<void()> &&function, const Time &interval) {
 		std::unique_lock<std::mutex> lock(mutex);
 		auto &instance = timers.emplace_back(std::make_unique<Timer>(interval, std::nullopt));
-		instance->onTick.connect(object, std::move(function));
+		instance->onTick.connect(std::move(function));
 		condition.notify_all();
 		return instance.get();
 	}
@@ -67,7 +67,7 @@ public:
 	Timer *Repeat(Instance *object, std::function<void()> &&function, const Time &interval, uint32_t repeat) {
 		std::unique_lock<std::mutex> lock(mutex);
 		auto &instance = timers.emplace_back(std::make_unique<Timer>(interval, repeat));
-		instance->onTick.connect(object, std::move(function));
+		instance->onTick.connect(std::move(function));
 		condition.notify_all();
 		return instance.get();
 	}

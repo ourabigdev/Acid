@@ -12,8 +12,8 @@
 using namespace acid;
 
 namespace test {
-class Hierarchy : public UiPanel {
-public:
+	class Hierarchy : public UiPanel, public rocket::trackable{
+	public:
 	Hierarchy();
 
 	void UpdateObject() override;

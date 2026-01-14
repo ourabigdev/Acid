@@ -34,7 +34,7 @@ Inspector::Inspector() {
 	slider1.SetValueMax(100.0f);
 	slider1.SetRoundTo(0);
 	slider1.SetValue(100.0f);
-	slider1.OnValue().connect(this, [this](float value) {
+	slider1.OnValue().connect([this](float value) {
 		Audio::Get()->SetGain(Audio::Type::Effect, value);
 	});
 	section1.AddChild(&slider1);
@@ -43,7 +43,7 @@ Inspector::Inspector() {
 	text1.SetTitle("Title");
 	text1.SetMaxLength(14);
 	text1.SetValue(Windows::Get()->GetWindow(0)->GetTitle());
-	text1.OnValue().connect(this, [this](std::string text) {
+	text1.OnValue().connect([this](std::string text) {
 		Windows::Get()->GetWindow(0)->SetTitle(text);
 	});
 	section1.AddChild(&text1);

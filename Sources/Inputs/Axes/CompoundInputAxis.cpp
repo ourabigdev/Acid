@@ -35,7 +35,7 @@ void CompoundInputAxis::RemoveAxis(InputAxis *axis) {
 }
 
 void CompoundInputAxis::ConnectAxis(std::unique_ptr<InputAxis> &axis) {
-	axis->OnAxis().connect(this, [this](float value) {
+	axis->OnAxis().connect([this](float value) {
 		onAxis(GetAmount());
 	});
 }

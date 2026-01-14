@@ -13,10 +13,10 @@ bool JoystickInputButton::IsDown() const {
 void JoystickInputButton::SetPort(JoystickPort port) {
 	joystick = Joysticks::Get()->GetJoystick(port);
 	disconnect_tracked_connections();
-	joystick->OnButton().connect(this, [this](JoystickButton button, InputAction action) {
+	joystick->OnButton().connect(std::function<void(uint8_t, InputAction)>([this](uint8_t button, InputAction action) {
 		if (this->button == button)
 			onButton(action, 0);
-	});
+	}));
 }
 
 InputAxis::ArgumentDescription JoystickInputButton::GetArgumentDescription() const {

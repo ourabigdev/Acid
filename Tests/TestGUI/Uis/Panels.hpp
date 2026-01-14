@@ -19,8 +19,8 @@
 using namespace acid;
 
 namespace test {
-class Inventory : public UiObject {
-public:
+	class Inventory : public UiObject, public rocket::trackable{
+	public:
 	explicit Inventory() {
 		SetScaleDriver<SinewaveDriver>(Vector2f(0.9f), Vector2f(1.2f), 6s);
 		for (uint32_t i = 0; i < 10; i++) {

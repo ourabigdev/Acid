@@ -26,10 +26,10 @@ UiDropdownInput::UiDropdownInput() {
 	AddChild(&textTitle);
 
 	SetCursorHover(std::make_unique<Cursor>(CursorStandard::Hand));
-	OnSelected().connect(this, [this](bool selected) {
+	OnSelected().connect(std::function<void(bool)>([this](bool selected) {
 		background.SetColourDriver<SlideDriver>(background.GetColourDriver()->Get(),
 			selected ? UiButtonInput::SelectedColour : UiButtonInput::PrimaryColour, UiButtonInput::SlideTime);
-	});
+	}));
 }
 
 void UiDropdownInput::UpdateObject() {

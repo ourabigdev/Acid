@@ -13,7 +13,7 @@ float JoystickInputAxis::GetAmount() const {
 void JoystickInputAxis::SetPort(JoystickPort port) {
 	joystick = Joysticks::Get()->GetJoystick(port);
 	disconnect_tracked_connections();
-	joystick->OnAxis().connect(this, [this](JoystickAxis axis, float value) {
+	joystick->OnAxis().connect([this](JoystickAxis axis, float value) {
 		if (this->axis == axis)
 			onAxis(GetAmount());
 	});

@@ -17,13 +17,13 @@ UiScrollBar::UiScrollBar() {
 	scroll.SetColourDriver<ConstantDriver>(UiButtonInput::PrimaryColour);
 	AddChild(&scroll);
 
-	Windows::Get()->GetWindow(0)->OnMouseScroll().connect(this, [this](Vector2d wheelDelta) {
+	Windows::Get()->GetWindow(0)->OnMouseScroll().connect(std::function<void(Vector2d)>([this](Vector2d wheelDelta) {
 		if (GetParent()->IsSelected() && !updating && scroll.IsEnabled()) {
 			Vector2f position;
 			position[index] = ScrollByDelta(wheelDelta[index]);
 //			scroll.GetTransform().SetPosition(position);
 		}
-	});
+	}));
 }
 
 void UiScrollBar::UpdateObject() {

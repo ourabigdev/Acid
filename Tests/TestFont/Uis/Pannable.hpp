@@ -10,8 +10,8 @@
 using namespace acid;
 
 namespace test {
-class Pannable : public UiObject {
-public:
+	class Pannable : public UiObject, public rocket::trackable{
+	public:
 	Pannable();
 
 	void UpdateObject() override;

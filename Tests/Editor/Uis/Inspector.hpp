@@ -12,8 +12,8 @@
 using namespace acid;
 
 namespace test {
-class Inspector : public UiPanel {
-public:
+	class Inspector : public UiPanel, public rocket::trackable{
+	public:
 	Inspector();
 
 	void UpdateObject() override;

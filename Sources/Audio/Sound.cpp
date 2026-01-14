@@ -25,10 +25,10 @@ Sound::Sound(const std::string &filename, const Audio::Type &type, bool begin, b
 	if (begin)
 		Play(loop);
 
-	Audio::Get()->OnGain().connect(this, [this](Audio::Type type, float volume) {
+	Audio::Get()->OnGain().connect(std::function<void(Audio::Type, float)>([this](Audio::Type type, float volume) {
 		if (this->type == type)
 			SetGain(this->gain);
-	});
+	}));
 }
 
 Sound::~Sound() {

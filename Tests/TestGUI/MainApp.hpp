@@ -6,8 +6,8 @@
 using namespace acid;
 
 namespace test {
-class MainApp : public App {
-public:
+	class MainApp : public App, public rocket::trackable{
+	public:
 	MainApp();
 	~MainApp();
 

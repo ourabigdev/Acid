@@ -34,7 +34,7 @@ MainApp::MainApp() :
 	Files::Get()->AddSearchPath("Resources/Engine");
 
 	// Watches all files in the working directory.
-	fileObserver.OnChange().connect(this, [this](std::filesystem::path path, FileObserver::Status status) {
+	fileObserver.OnChange().connect([this](std::filesystem::path path, FileObserver::Status status) {
 		switch (status) {
 		case FileObserver::Status::Created:
 			Log::Out("Created ", path, '\n');
@@ -51,19 +51,19 @@ MainApp::MainApp() :
 	// Loads a input scheme for this app.
 	Inputs::Get()->AddScheme("Default", std::make_unique<InputScheme>("InputSchemes/DefaultGUI.json"), true);
 
-	Inputs::Get()->GetButton("fullscreen")->OnButton().connect(this, [this](InputAction action, bitmask::bitmask<InputMod> mods) {
+	Inputs::Get()->GetButton("fullscreen")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {
 			Windows::Get()->GetWindow(0)->SetFullscreen(!Windows::Get()->GetWindow(0)->IsFullscreen());
 		}
 	});
-	Inputs::Get()->GetButton("screenshot")->OnButton().connect(this, [this](InputAction action, bitmask::bitmask<InputMod> mods) {
+	Inputs::Get()->GetButton("screenshot")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {
 			Resources::Get()->GetThreadPool().Enqueue([]() {
 				Graphics::Get()->CaptureScreenshot(Time::GetDateTime("Screenshots/%Y%m%d%H%M%S.png"));
 			});
 		}
 	});
-	Inputs::Get()->GetButton("exit")->OnButton().connect(this, [this](InputAction action, bitmask::bitmask<InputMod> mods) {
+	Inputs::Get()->GetButton("exit")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {
 			Engine::Get()->RequestClose();
 		}

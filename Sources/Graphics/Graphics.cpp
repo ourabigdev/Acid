@@ -12,9 +12,9 @@ Graphics::Graphics() :
 	instance(std::make_unique<Instance>()),
 	physicalDevice(std::make_unique<PhysicalDevice>(*instance)),
 	logicalDevice(std::make_unique<LogicalDevice>(*instance, *physicalDevice)) {
-	Windows::Get()->OnAddWindow().connect(this, [this](Window *window, bool added) {
+	Windows::Get()->OnAddWindow().connect(std::function<void(Window *, bool)>([this](Window *window, bool added) {
 		surfaces.emplace_back(std::make_unique<Surface>(*instance, *physicalDevice, *logicalDevice, *window));
-	});
+	}));
 
 	CreatePipelineCache();
 

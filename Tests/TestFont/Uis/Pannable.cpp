@@ -69,7 +69,7 @@ Pannable::Pannable(){
 	masterVolume.SetValueMax(100.0f);
 	masterVolume.SetRoundTo(0);
 	masterVolume.SetValue(100.0f);
-	masterVolume.OnValue().connect(this, [this](float value) {
+	masterVolume.OnValue().connect([this](float value) {
 		Audio::Get()->SetGain(Audio::Type::Master, value / 100.0f);
 	});
 	settings.AddChild(&masterVolume);
@@ -77,7 +77,7 @@ Pannable::Pannable(){
 	//antialiasing.SetTransform({UiButtonInput::Size, UiAnchor::LeftTop, {0, 34}});
 	antialiasing.SetTitle("Antialiasing");
 	antialiasing.SetValue(true);
-	antialiasing.OnValue().connect(this, [this](bool value) {
+	antialiasing.OnValue().connect([this](bool value) {
 	});
 	settings.AddChild(&antialiasing);
 	
@@ -96,7 +96,7 @@ Pannable::Pannable(){
 	textUps.SetFontSize(11);
 	AddChild(&textUps);
 
-	Inputs::Get()->GetButton("reset")->OnButton().connect(this, [this](InputAction action, bitmask::bitmask<InputMod> mods) {
+	Inputs::Get()->GetButton("reset")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {
 			zoom = 1.0f;
 //			content.GetTransform().SetPosition({0.5f, 0.5f});
