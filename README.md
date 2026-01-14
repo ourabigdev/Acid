@@ -106,7 +106,7 @@ Timers::Get()->Repeat([]() {
 <img src="Documents/Screenshot5.png" alt="Acid" width="600px">
 
 ## Compiling
-All platforms depend on [CMake](https://cmake.org/download), 4.0.0 or higher, to generate IDE/make files.
+All platforms depend on [CMake](https://cmake.org/download), 4.2.1 or higher, to generate IDE/make files.
 
 CMake options (default ON):
 * `BUILD_TESTS`
