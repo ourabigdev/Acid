@@ -63,8 +63,9 @@ MainApp::~MainApp() {
 
 void MainApp::Start() {
 	// Sets values to modules.
-	Windows::Get()->GetWindow(0)->SetTitle("Test PBR");
-	Windows::Get()->GetWindow(0)->SetIcons({
+	auto window = Windows::Get()->AddWindow();
+	window->SetTitle("Test PBR");
+	window->SetIcons({
 		"Icons/Icon-16.png", "Icons/Icon-24.png", "Icons/Icon-32.png", "Icons/Icon-48.png", "Icons/Icon-64.png",
 		"Icons/Icon-96.png", "Icons/Icon-128.png", "Icons/Icon-192.png", "Icons/Icon-256.png"
 		});

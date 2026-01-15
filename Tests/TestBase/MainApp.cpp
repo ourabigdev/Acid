@@ -1,50 +1,64 @@
+﻿#include "MainApp.hpp"
+
 #include <iostream>
-#include <Devices/Windows.hpp>
 #include <Files/Files.hpp>
-#include <Graphics/Renderer.hpp>
+#include <Graphics/Graphics.hpp>
+#include <Resources/Resources.hpp>
 #include <Scenes/Scenes.hpp>
-#include "Config.hpp"
+#include <Uis/Uis.hpp>
+#include "MainRenderer.hpp"
 
 using namespace acid;
 
 int main(int argc, char **argv) {
-	// Creates the engine.
+	using namespace testBase;
+
 	auto engine = std::make_unique<Engine>(argv[0]);
+	engine->SetApp(std::make_unique<MainApp>());
 
-	// TODO: Only when not installed. 
-	/* if (std::filesystem::exists(GAME_RESOURCES_DEV))
-	{
-		Files::Get()->AddSearchPath(std::string(GAME_RESOURCES_DEV));
-	}*/
-	
-	// Registers file search paths.
-	Files::Get()->AddSearchPath("Resources/Game");
-	Files::Get()->AddSearchPath("Resources/Engine");
-
-	Log::Out("Working Directory: %ls\n", std::filesystem::current_path());
-
-	// Registers modules.
-
-	// Registers components.
-
-	// Initializes modules.
-	auto window0 = Windows::Get()->AddWindow();
-	window0->SetTitle("Game");
-	window0->SetIcons({"Icons/Icon-16.png", "Icons/Icon-24.png", "Icons/Icon-32.png", "Icons/Icon-48.png",
-		"Icons/Icon-64.png", "Icons/Icon-96.png", "Icons/Icon-128.png", "Icons/Icon-192.png", "Icons/Icon-256.png"});
-	
-	window0->OnClose().connect([]() {
-		Engine::Get()->RequestClose();
-	});
-
-	//Graphics::Get()->SetManager(std::make_unique<MainRenderer>());
-	//Scenes::Get()->SetScene(std::make_unique<Scene1>());
-
-	// Runs the game loop.
 	auto exitCode = engine->Run();
+	engine = nullptr;
 
-	// Pauses the console.
-	//std::cout << "Press enter to continue...";
-	//std::cin.get();
+	std::cout << "Exited with code " << exitCode << std::endl;
+	std::cin.get();
+
 	return exitCode;
+}
+
+namespace testBase
+{
+	MainApp::MainApp()
+		: App("Acid Test Base", Version(0, 1, 0))
+	{
+	}
+
+	MainApp::~MainApp()
+	{
+		Graphics::Get()->SetRenderer(nullptr);
+		Scenes::Get()->SetScene(nullptr);
+		Uis::Get()->GetCanvas().ClearChildren();
+	}
+
+	void MainApp::Start()
+	{
+		std::cout << "=== MainApp::Start() BEGIN ===" << std::endl;
+
+		std::cout << "Adding window..." << std::endl;
+		auto window = Windows::Get()->AddWindow(); // ← CREATE the window
+		std::cout << "Window created: " << (void *)window << std::endl;
+
+		std::cout << "Setting window title..." << std::endl;
+		window->SetTitle("Acid Test Base");
+
+		std::cout << "Setting window icons..." << std::endl;
+		window->SetIcons({"Icons/Icon-16.png", "Icons/Icon-24.png", "Icons/Icon-32.png", "Icons/Icon-48.png", "Icons/Icon-64.png", "Icons/Icon-96.png", "Icons/Icon-128.png", "Icons/Icon-192.png",
+			"Icons/Icon-256.png"});
+
+		std::cout << "Setting up Graphics..." << std::endl;
+		Graphics::Get()->SetRenderer(std::make_unique<MainRenderer>());
+
+		std::cout << "=== MainApp::Start() END ===" << std::endl;
+	}
+
+	void MainApp::Update() {}
 }
