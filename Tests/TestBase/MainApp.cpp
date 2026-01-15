@@ -44,7 +44,7 @@ namespace testBase
 		std::cout << "=== MainApp::Start() BEGIN ===" << std::endl;
 
 		std::cout << "Adding window..." << std::endl;
-		auto window = Windows::Get()->AddWindow(); // ← CREATE the window
+		auto window = Windows::Get()->AddWindow(); 
 		std::cout << "Window created: " << (void *)window << std::endl;
 
 		std::cout << "Setting window title..." << std::endl;

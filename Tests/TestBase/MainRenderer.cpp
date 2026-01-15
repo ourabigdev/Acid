@@ -70,6 +70,17 @@ namespace testBase
 	}
 
 	void MainRenderer::Start() {
+		const std::vector<BaseVertex> vertices = {
+			{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}}, 
+			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}}, 
+			{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+		};
+
+		auto model = std::make_unique<Model>(vertices);
+
+		auto tri = AddSubrender<BaseSubrender>({0, 0});
+
+		tri->SetModel(std::move(model));
 	}
 
 	void MainRenderer::Update()
