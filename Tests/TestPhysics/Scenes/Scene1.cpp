@@ -287,6 +287,16 @@ void Scene1::Start() {
 		std::make_unique<DefaultMaterial>(Colour::Red, nullptr, 0.0f, 1.0f));
 	cylinder->AddComponent<Rigidbody>(std::make_unique<CylinderCollider>(1.1f, 2.2f), 2.5f);
 	cylinder->AddComponent<ShadowRender>();
+
+	auto smokeSystem = CreatePrefabEntity("Objects/Smoke/Smoke.json");
+	smokeSystem->AddComponent<Transform>(Vector3f(-15.0f, 4.0f, 12.0f));
+	//smokeSystem->AddComponent<Sound>("Sounds/Music/Hiitori-Bocchi.wav", Audio::Type::Music, true, true);
+
+#ifdef ACID_DEBUG
+	EntityPrefab prefabSmokeSystem("Prefabs/SmokeSystem.json");
+	prefabSmokeSystem << *smokeSystem;
+	prefabSmokeSystem.Write(NodeFormat::Beautified);
+#endif
 }
 
 void Scene1::Update() {

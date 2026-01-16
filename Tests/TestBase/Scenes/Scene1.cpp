@@ -177,16 +177,6 @@ void Scene1::Start() {
 	cone->AddComponent<Rigidbody>(std::make_unique<ConeCollider>(1.0f, 2.0f),
 		/*std::make_unique<SphereCollider>(1.0f, Transform({0.0f, 2.0f, 0.0f})),*/ 1.5f);
 	cone->AddComponent<ShadowRender>();
-
-	auto smokeSystem = CreatePrefabEntity("Objects/Smoke/Smoke.json");
-	smokeSystem->AddComponent<Transform>(Vector3f(-15.0f, 4.0f, 12.0f));
-	smokeSystem->AddComponent<Sound>("Sounds/Music/Hiitori-Bocchi.wav", Audio::Type::Music, true, true);
-
-#ifdef ACID_DEBUG
-	EntityPrefab prefabSmokeSystem("Prefabs/SmokeSystem.json");
-	prefabSmokeSystem << *smokeSystem;
-	prefabSmokeSystem.Write(NodeFormat::Beautified);
-#endif
 }
 
 void Scene1::Update() {
