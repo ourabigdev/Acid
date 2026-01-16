@@ -1,20 +1,22 @@
 #pragma once
+
+#include <Devices/Cursor.hpp>
 #include <Engine/App.hpp>
-#include <Fonts/Text.hpp>
+#include "Configs/ConfigManager.hpp"
 
 using namespace acid;
-namespace testBase
-{
-	class MainApp : public App, public rocket::trackable
-	{
+
+namespace test {
+	class MainApp : public App, public rocket::trackable{
 	public:
-		MainApp();
-		~MainApp();
+	MainApp();
+	~MainApp();
 
-		void Start() override;
-		void Update() override;
+	void Start() override;
+	void Update() override;
 
-	private:
-		Text helloWorldText;
-	};
+private:
+	ConfigManager configManager;
+	Cursor cursor;
+};
 }

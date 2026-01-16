@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Graphics/Renderer.hpp>
+#include <Scenes/Camera.hpp>
 
 using namespace acid;
 
 namespace test {
-class MainRenderer : public Renderer {
+class FpsCamera : public Camera {
 public:
-	MainRenderer();
-	
+	FpsCamera();
+
 	void Start() override;
 	void Update() override;
 };
