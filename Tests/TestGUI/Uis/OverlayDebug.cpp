@@ -38,9 +38,9 @@ void OverlayDebug::UpdateObject() {
 	//slices.GetTransform().SetSize(2.0f * (Mouse::Get()->GetPosition() - (Window::Get()->GetSize() / 2)));
 
 	auto paused = Scenes::Get()->GetScene()->IsPaused();
-	textFrameTime.SetTextColour(paused ? Colour::Black : Colour::White);
-	textFps.SetTextColour(paused ? Colour::Black : Colour::White);
-	textUps.SetTextColour(paused ? Colour::Black : Colour::White);
+	textFrameTime.SetTextColour(paused ? Colour::Blue : Colour::Lime);
+	textFps.SetTextColour(paused ? Colour::Blue : Colour::Lime);
+	textUps.SetTextColour(paused ? Colour::Blue : Colour::Lime);
 
 	textFrameTime.SetString("Frame Time: " + String::To(1000.0f / Engine::Get()->GetFps()) + "ms");
 	textFps.SetString("FPS: " + String::To(Engine::Get()->GetFps()));

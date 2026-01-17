@@ -32,26 +32,7 @@ MainApp::MainApp() :
 	Log::Out("Working Directory: ", std::filesystem::current_path(), '\n');
 	Files::Get()->AddSearchPath("Resources/Engine");
 
-	// Loads a input scheme for this app.
-	Inputs::Get()->AddScheme("Default", std::make_unique<InputScheme>("InputSchemes/DefaultPBR.json"), true);
-
-	Inputs::Get()->GetButton("fullscreen")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
-		if (action == InputAction::Press) {
-			Windows::Get()->GetWindow(0)->SetFullscreen(!Windows::Get()->GetWindow(0)->IsFullscreen());
-		}
-	});
-	Inputs::Get()->GetButton("screenshot")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
-		if (action == InputAction::Press) {
-			Resources::Get()->GetThreadPool().Enqueue([]() {
-				Graphics::Get()->CaptureScreenshot(Time::GetDateTime("Screenshots/%Y%m%d%H%M%S.png"));
-			});
-		}
-	});
-	Inputs::Get()->GetButton("exit")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
-		if (action == InputAction::Press) {
-			Engine::Get()->RequestClose();
-		}
-	});
+	
 }
 
 MainApp::~MainApp() {
@@ -72,6 +53,41 @@ void MainApp::Start() {
 	//Mouse::Get()->SetCursor("Guis/Cursor.png", CursorHotspot::UpperLeft);
 	Graphics::Get()->SetRenderer(std::make_unique<MainRenderer>());
 	Scenes::Get()->SetScene(std::make_unique<Scene1>());
+
+
+	// Loads a input scheme for this app.
+	Inputs::Get()->AddScheme("Default", std::make_unique<InputScheme>("InputSchemes/DefaultPBR.json"), true);
+
+	Inputs::Get()
+		->GetButton("fullscreen")
+		->OnButton()
+		.connect(
+			[this](InputAction action, bitmask::bitmask<InputMod> mods)
+			{
+				if (action == InputAction::Press)
+				{
+					Windows::Get()->GetWindow(0)->SetFullscreen(!Windows::Get()->GetWindow(0)->IsFullscreen());
+				}
+			});
+	Inputs::Get()
+		->GetButton("screenshot")
+		->OnButton()
+		.connect(
+			[this](InputAction action, bitmask::bitmask<InputMod> mods)
+			{
+				if (action == InputAction::Press)
+				{
+					Resources::Get()->GetThreadPool().Enqueue([]() { Graphics::Get()->CaptureScreenshot(Time::GetDateTime("Screenshots/%Y%m%d%H%M%S.png")); });
+				}
+			});
+	Inputs::Get()->GetButton("exit")->OnButton().connect(
+		[this](InputAction action, bitmask::bitmask<InputMod> mods)
+		{
+			if (action == InputAction::Press)
+			{
+				Engine::Get()->RequestClose();
+			}
+		});
 }
 
 void MainApp::Update() {

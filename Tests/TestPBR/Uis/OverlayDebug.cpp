@@ -12,7 +12,7 @@ OverlayDebug::OverlayDebug() {
 			.SetHeight<PixelConstraint>(12)
 			.SetX<PixelConstraint>(2, UiAnchor::Left)
 			.SetY<PixelConstraint>(-2 - (i * 14), UiAnchor::Bottom);
-		object.SetFontType(FontType::Create("Fonts/ProximaNova-Regular.ttf"));
+		//object.SetFontType(FontType::Create("Fonts/ProximaNova-Regular.ttf"));
 		object.SetFontSize(11);
 		AddChild(&object);
 	};

@@ -10,35 +10,28 @@
 namespace test {
 constexpr Time UI_SLIDE_TIME = 0.2s;
 
-Scene1::Scene1() :
-	Scene(std::make_unique<Camera>()) {
-	//uiStartLogo.SetTransform({UiMargins::All});
+Scene1::Scene1()
+	: Scene(std::make_unique<Camera>())
+{
 	uiStartLogo.SetAlphaDriver<ConstantDriver>(1.0f);
-	uiStartLogo.OnFinished().connect([this]() {
-		overlayDebug.SetAlphaDriver<SlideDriver>(0.0f, 1.0f, UI_SLIDE_TIME);
-		//uiPanels.SetAlphaDriver<SlideDriver>(0.0f, 1.0f, UI_SLIDE_TIME);
-		TogglePause();
-	});
+	uiStartLogo.OnFinished().connect([this]() { TogglePause(); });
 	Uis::Get()->GetCanvas().AddChild(&uiStartLogo);
 
-	//uiPanels.SetTransform({UiMargins::All});
 	uiPanels.SetAlphaDriver<ConstantDriver>(0.0f);
 	Uis::Get()->GetCanvas().AddChild(&uiPanels);
 
-	//overlayDebug.SetTransform({{100, 36}, UiAnchor::LeftBottom});
-	overlayDebug.GetConstraints().SetWidth<PixelConstraint>(100)
-		.SetHeight<PixelConstraint>(36)
-		.SetX<PixelConstraint>(0, UiAnchor::Left)
-		.SetY<PixelConstraint>(0, UiAnchor::Bottom);
-	overlayDebug.SetAlphaDriver<ConstantDriver>(0.0f);
-	Uis::Get()->GetCanvas().AddChild(&overlayDebug);
-	
-	//Uis::Get()->GetCanvas().SetScaleDriver<SinewaveDriver>(Vector2f(0.3f), Vector2f(5.0f), 16s);
-	Inputs::Get()->GetButton("pause")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
-		if (action == InputAction::Press) {
-			TogglePause();
-		}
-	});
+	overlayDebug.GetConstraints().SetWidth<PixelConstraint>(100).SetHeight<PixelConstraint>(36).SetX<PixelConstraint>(0, UiAnchor::Left).SetY<PixelConstraint>(0, UiAnchor::Bottom);
+	overlayDebug.SetAlphaDriver<ConstantDriver>(1.0f); 
+	Uis::Get()->GetCanvas().AddChild(&overlayDebug); 
+
+	Inputs::Get()->GetButton("pause")->OnButton().connect(
+		[this](InputAction action, bitmask::bitmask<InputMod> mods)
+		{
+			if (action == InputAction::Press)
+			{
+				TogglePause();
+			}
+		});
 }
 
 void Scene1::Start() {

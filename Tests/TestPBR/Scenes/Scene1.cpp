@@ -30,11 +30,11 @@ Scene1::Scene1() :
 	//AddSystem<Gizmos>();
 	
 	//overlayDebug.SetTransform({{100, 36}, UiAnchor::LeftBottom});
-	overlayDebug.GetConstraints().SetWidth<PixelConstraint>(100)
+	/* overlayDebug.GetConstraints().SetWidth<PixelConstraint>(100)
 		.SetHeight<PixelConstraint>(36)
 		.SetX<PixelConstraint>(0, UiAnchor::Left)
 		.SetY<PixelConstraint>(0, UiAnchor::Bottom);
-	Uis::Get()->GetCanvas().AddChild(&overlayDebug);
+	Uis::Get()->GetCanvas().AddChild(&overlayDebug);*/
 	
 	Inputs::Get()->GetButton("captureMouse")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
 		if (action == InputAction::Press) {

@@ -47,48 +47,65 @@ MainApp::MainApp() :
 			break;
 		}
 	});
-
-	// Loads a input scheme for this app.
-	Inputs::Get()->AddScheme("Default", std::make_unique<InputScheme>("InputSchemes/DefaultGUI.json"), true);
-
-	Inputs::Get()->GetButton("fullscreen")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
-		if (action == InputAction::Press) {
-			Windows::Get()->GetWindow(0)->SetFullscreen(!Windows::Get()->GetWindow(0)->IsFullscreen());
-		}
-	});
-	Inputs::Get()->GetButton("screenshot")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
-		if (action == InputAction::Press) {
-			Resources::Get()->GetThreadPool().Enqueue([]() {
-				Graphics::Get()->CaptureScreenshot(Time::GetDateTime("Screenshots/%Y%m%d%H%M%S.png"));
-			});
-		}
-	});
-	Inputs::Get()->GetButton("exit")->OnButton().connect([this](InputAction action, bitmask::bitmask<InputMod> mods) {
-		if (action == InputAction::Press) {
-			Engine::Get()->RequestClose();
-		}
-	});
 }
 
 MainApp::~MainApp() {
 	Files::Get()->ClearSearchPath();
 
-	Graphics::Get()->SetRenderer(nullptr);
-	Scenes::Get()->SetScene(nullptr);
+	//Graphics::Get()->SetRenderer(nullptr);
+	//Scenes::Get()->SetScene(nullptr);
 }
 
 void MainApp::Start() {
-
+	std::cout << "Starting Test GUI App\n";
 	auto window = Windows::Get()->AddWindow();
 	// Sets values to modules.
+	std::cout << "setting title\n";
 	window->SetTitle("Test GUI");
+	std::cout << "Setting the icon\n";
 	window->SetIcons({
 		"Icons/Icon-16.png", "Icons/Icon-24.png", "Icons/Icon-32.png", "Icons/Icon-48.png", "Icons/Icon-64.png",
 		"Icons/Icon-96.png", "Icons/Icon-128.png", "Icons/Icon-192.png", "Icons/Icon-256.png"
 		});
 	//Mouse::Get()->SetCursor("Guis/Cursor.png", CursorHotspot::UpperLeft);
+	std::cout << "Setting grahics\n";
 	Graphics::Get()->SetRenderer(std::make_unique<MainRenderer>());
+	std::cout << "Scene\n";
 	Scenes::Get()->SetScene(std::make_unique<Scene1>());
+
+	// Loads a input scheme for this app.
+	Inputs::Get()->AddScheme("Default", std::make_unique<InputScheme>("InputSchemes/DefaultGUI.json"), true);
+
+	Inputs::Get()
+		->GetButton("fullscreen")
+		->OnButton()
+		.connect(
+			[this](InputAction action, bitmask::bitmask<InputMod> mods)
+			{
+				if (action == InputAction::Press)
+				{
+					Windows::Get()->GetWindow(0)->SetFullscreen(!Windows::Get()->GetWindow(0)->IsFullscreen());
+				}
+			});
+	Inputs::Get()
+		->GetButton("screenshot")
+		->OnButton()
+		.connect(
+			[this](InputAction action, bitmask::bitmask<InputMod> mods)
+			{
+				if (action == InputAction::Press)
+				{
+					Resources::Get()->GetThreadPool().Enqueue([]() { Graphics::Get()->CaptureScreenshot(Time::GetDateTime("Screenshots/%Y%m%d%H%M%S.png")); });
+				}
+			});
+	Inputs::Get()->GetButton("exit")->OnButton().connect(
+		[this](InputAction action, bitmask::bitmask<InputMod> mods)
+		{
+			if (action == InputAction::Press)
+			{
+				Engine::Get()->RequestClose();
+			}
+		});
 }
 
 void MainApp::Update() {
