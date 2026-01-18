@@ -18,7 +18,7 @@ void Text::UpdateObject() {
 
 bool Text::CmdRender(const CommandBuffer &commandBuffer, const PipelineGraphics &pipeline) {
 	// Gets if this should be rendered.
-	/*if (!model || !fontType || !IsEnabled())
+	if (!model || !fontType || !IsEnabled())
 		return false;
 
 	// Updates descriptors.
@@ -38,7 +38,7 @@ bool Text::CmdRender(const CommandBuffer &commandBuffer, const PipelineGraphics 
 
 	// Draws the object.
 	descriptorSet.BindDescriptor(commandBuffer, pipeline);
-	return model->CmdRender(commandBuffer);*/
+	return model->CmdRender(commandBuffer);
 	return false;
 }
 
@@ -77,10 +77,6 @@ bool Text::IsLoaded() const {
 }
 
 void Text::LoadText() {
-/*#ifdef ACID_DEBUG
-	auto debugStart = Time::Now();
-#endif*/
-
 	if (string.empty()) {
 		model = nullptr;
 		return;
@@ -93,24 +89,21 @@ void Text::LoadText() {
 	numberLines = static_cast<uint32_t>(lines.size());
 	auto vertices = CreateQuad(lines);
 
-	vertices.emplace_back(Vector2f(0.0f, 1.0f), Vector3f(0.0f, 0.0f, 0.0f));
-	vertices.emplace_back(Vector2f(0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
-	vertices.emplace_back(Vector2f(1.0f, 0.0f), Vector3f(1.0f, 1.0f, 0.0f));
-	vertices.emplace_back(Vector2f(0.0f, 1.0f), Vector3f(0.0f, 0.0f, 0.0f));
-	vertices.emplace_back(Vector2f(1.0f, 0.0f), Vector3f(1.0f, 1.0f, 0.0f));
-	vertices.emplace_back(Vector2f(1.0f, 1.0f), Vector3f(1.0f, 0.0f, 0.0f));
+	// REMOVED: Debug vertices that were interfering with rendering
+	// vertices.emplace_back(Vector2f(0.0f, 1.0f), Vector3f(0.0f, 0.0f, 0.0f));
+	// vertices.emplace_back(Vector2f(0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
+	// vertices.emplace_back(Vector2f(1.0f, 0.0f), Vector3f(1.0f, 1.0f, 0.0f));
+	// vertices.emplace_back(Vector2f(0.0f, 1.0f), Vector3f(0.0f, 0.0f, 0.0f));
+	// vertices.emplace_back(Vector2f(1.0f, 0.0f), Vector3f(1.0f, 1.0f, 0.0f));
+	// vertices.emplace_back(Vector2f(1.0f, 1.0f), Vector3f(1.0f, 0.0f, 0.0f));
 
 	// Loads the mesh data.
 	model = std::make_unique<Model>(vertices);
 	dirty = false;
-
-/*#ifdef ACID_DEBUG
-	Log::Out("Text mesh with ", string.length(), " chars created in ", (Time::Now() - debugStart).AsMilliseconds<float>(), "ms\n");
-#endif*/
 }
 
 std::vector<Text::Line> Text::CreateStructure() const {
-	/*auto maxLength = lastSize.x;// / fontSize * fontType->GetMetafile()->GetMaxAdvance();
+	auto maxLength = lastSize.x;
 
 	std::vector<Line> lines;
 	Line currentLine(fontType->GetSpaceWidth(), maxLength);
@@ -121,6 +114,8 @@ std::vector<Text::Line> Text::CreateStructure() const {
 
 	for (uint32_t i = 0; i < textLines.size(); i++) {
 		if (textLines.at(i).empty()) {
+			lines.emplace_back(currentLine);
+			currentLine = Line(fontType->GetSpaceWidth(), maxLength); // FIXED: Reset line properly
 			continue;
 		}
 
@@ -130,7 +125,7 @@ std::vector<Text::Line> Text::CreateStructure() const {
 			if (ascii == FontType::SpaceAscii) {
 				if (!currentLine.AddWord(currentWord)) {
 					lines.emplace_back(currentLine);
-					currentLine = {fontType->GetSpaceWidth(), maxLength};
+					currentLine = Line(fontType->GetSpaceWidth(), maxLength); // FIXED
 					currentLine.AddWord(currentWord);
 				}
 
@@ -146,7 +141,7 @@ std::vector<Text::Line> Text::CreateStructure() const {
 		if (i != textLines.size() - 1) {
 			auto wordAdded = currentLine.AddWord(currentWord);
 			lines.emplace_back(currentLine);
-			currentLine = {fontType->GetSpaceWidth(), maxLength};
+			currentLine = Line(fontType->GetSpaceWidth(), maxLength); // FIXED
 
 			if (!wordAdded) {
 				currentLine.AddWord(currentWord);
@@ -157,24 +152,11 @@ std::vector<Text::Line> Text::CreateStructure() const {
 	}
 
 	CompleteStructure(lines, currentLine, currentWord, maxLength);
-	return lines;*/
-	return {};
-}
-
-void Text::CompleteStructure(std::vector<Line> &lines, Line &currentLine, const Word &currentWord, float maxLength) const {
-	/*auto added = currentLine.AddWord(currentWord);
-
-	if (!added) {
-		lines.emplace_back(currentLine);
-		currentLine = {fontType->GetSpaceWidth(), maxLength};
-		currentLine.AddWord(currentWord);
-	}
-
-	lines.emplace_back(currentLine);*/
+	return lines;
 }
 
 std::vector<VertexText> Text::CreateQuad(const std::vector<Line> &lines) const {
-	/*std::vector<VertexText> vertices;
+	std::vector<VertexText> vertices;
 
 	float cursorX = 0.0f;
 	float cursorY = 0.0f;
@@ -213,30 +195,47 @@ std::vector<VertexText> Text::CreateQuad(const std::vector<Line> &lines) const {
 		lineOrder--;
 	}
 
-	return vertices;*/
-	return {};
+	return vertices;
+}
+
+void Text::CompleteStructure(std::vector<Line> &lines, Line &currentLine, const Word &currentWord, float maxLength) const
+{
+	auto added = currentLine.AddWord(currentWord);
+
+	if (!added)
+	{
+		lines.emplace_back(currentLine);
+		currentLine = Line(fontType->GetSpaceWidth(), maxLength);
+		currentLine.AddWord(currentWord);
+	}
+
+	lines.emplace_back(currentLine);
 }
 
 void Text::AddVerticesForGlyph(float cursorX, float cursorY, const FontType::Glyph &glyph, std::vector<VertexText> &vertices) {
-	/*auto vertexX = cursorX + glyph.offsetX;
-	auto vertexY = cursorY + glyph.offsetY;
-	auto vertexMaxX = vertexX + glyph.sizeX;
-	auto vertexMaxY = vertexY + glyph.sizeY;
+	auto vertexX = cursorX + static_cast<float>(glyph.x);
+	auto vertexY = cursorY + static_cast<float>(glyph.y);
+	auto vertexMaxX = vertexX + static_cast<float>(glyph.w);
+	auto vertexMaxY = vertexY + static_cast<float>(glyph.h);
 
-	auto textureX = glyph.textureCoordX;
-	auto textureY = glyph.textureCoordY;
-	auto textureMaxX = glyph.maxTextureCoordX;
-	auto textureMaxY = glyph.maxTextureCoordY;
+	// For MSDF fonts in Image2dArray, each glyph occupies full texture space (0,0) to (1,1)
+	auto textureX = 0.0f;
+	auto textureY = 0.0f;
+	auto textureMaxX = 1.0f;
+	auto textureMaxY = 1.0f;
+	
+	// Use the glyph's layer index
+	auto layer = static_cast<float>(glyph.layerIndex);
 
-	AddVertex(vertexX, vertexY, textureX, textureY, vertices);
-	AddVertex(vertexMaxX, vertexY, textureMaxX, textureY, vertices);
-	AddVertex(vertexMaxX, vertexMaxY, textureMaxX, textureMaxY, vertices);
-	AddVertex(vertexMaxX, vertexMaxY, textureMaxX, textureMaxY, vertices);
-	AddVertex(vertexX, vertexMaxY, textureX, textureMaxY, vertices);
-	AddVertex(vertexX, vertexY, textureX, textureY, vertices);*/
+	AddVertex(vertexX, vertexY, textureX, textureY, layer, vertices);
+	AddVertex(vertexMaxX, vertexY, textureMaxX, textureY, layer, vertices);
+	AddVertex(vertexMaxX, vertexMaxY, textureMaxX, textureMaxY, layer, vertices);
+	AddVertex(vertexMaxX, vertexMaxY, textureMaxX, textureMaxY, layer, vertices);
+	AddVertex(vertexX, vertexMaxY, textureX, textureMaxY, layer, vertices);
+	AddVertex(vertexX, vertexY, textureX, textureY, layer, vertices);
 }
 
-void Text::AddVertex(float vx, float vy, float tx, float ty, std::vector<VertexText> &vertices) {
-	vertices.emplace_back(VertexText({vx, vy}, {tx, ty, 0.0f}));
+void Text::AddVertex(float vx, float vy, float tx, float ty, float layer, std::vector<VertexText> &vertices) {
+	vertices.emplace_back(VertexText({vx, vy}, {tx, ty, layer}));
 }
 }

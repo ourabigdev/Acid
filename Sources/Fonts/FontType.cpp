@@ -85,36 +85,70 @@ void FontType::Close() {
 	library = nullptr;
 }
 
-void FontType::Load() {
-	if (filename.empty()) return;
+void FontType::Load()
+{
+	if (filename.empty())
+		return;
 
 #ifdef ACID_DEBUG
 	auto debugStart = Time::Now();
 #endif
 
 	Open();
-	
-	auto layerCount = NEHE.size();
-	//image = std::make_unique<Image2dArray>(Vector2ui(size, size), layerCount, VK_FORMAT_R32G32B32A32_SFLOAT);
 
-	tinymsdf::Bitmap<float, 4> mtsdf(size, size);
-	glyphs.resize(glyphs.size() + layerCount);
-	
-	for (auto c : NEHE) {
+	auto layerCount = NEHE.size();
+
+	// Create the image array - use consistent MSDF texture size
+	// Most MSDF implementations use 32x32 regardless of font point size
+	constexpr uint32_t MSDF_TEXTURE_SIZE = 32;
+	image = std::make_unique<Image2dArray>(Vector2ui(MSDF_TEXTURE_SIZE, MSDF_TEXTURE_SIZE), layerCount, VK_FORMAT_R32G32B32A32_SFLOAT);
+
+	tinymsdf::Bitmap<float, 4> mtsdf(MSDF_TEXTURE_SIZE, MSDF_TEXTURE_SIZE);
+
+	// Clear and resize - don't add to existing size
+	glyphs.clear();
+	glyphs.resize(layerCount);
+	indices.clear();
+
+	for (auto c : NEHE)
+	{
 		bool success = !tinymsdf::GenerateMTSDF(mtsdf, face, c);
 
 		auto id = indices.size();
 		indices[c] = id;
 
-		glyphs[id].advance = F26DOT6_TO_DOUBLE(face->glyph->metrics.horiAdvance);
-		glyphs[id].x = F26DOT6_TO_DOUBLE(face->glyph->metrics.horiBearingX);
-		glyphs[id].y = F26DOT6_TO_DOUBLE(face->glyph->metrics.horiBearingY);
-		glyphs[id].w = F26DOT6_TO_DOUBLE(face->glyph->metrics.width);
-		glyphs[id].h = F26DOT6_TO_DOUBLE(face->glyph->metrics.height);
-		glyphs[id].pxRange = 2;
+		glyphs[id].advance = static_cast<float>(F26DOT6_TO_DOUBLE(face->glyph->metrics.horiAdvance));
+		glyphs[id].x = static_cast<float>(F26DOT6_TO_DOUBLE(face->glyph->metrics.horiBearingX));
+		glyphs[id].y = static_cast<float>(F26DOT6_TO_DOUBLE(face->glyph->metrics.horiBearingY));
+		glyphs[id].w = static_cast<float>(F26DOT6_TO_DOUBLE(face->glyph->metrics.width));
+		glyphs[id].h = static_cast<float>(F26DOT6_TO_DOUBLE(face->glyph->metrics.height));
+		glyphs[id].pxRange = 2.0f;
+		glyphs[id].layerIndex = id;
 
-		//if (success)
-		//	image->SetPixels(mtsdf.pixels, id);
+		// Upload the MSDF texture data
+		if (success)
+		{
+			// Verify the bitmap has the expected size
+			auto expectedSize = MSDF_TEXTURE_SIZE * MSDF_TEXTURE_SIZE * 4; // 4 floats per pixel (RGBA)
+			if (mtsdf.pixels && mtsdf.width == MSDF_TEXTURE_SIZE && mtsdf.height == MSDF_TEXTURE_SIZE)
+			{
+				image->SetPixels(mtsdf.pixels, id);
+			}
+			else
+			{
+				Log::Error("MSDF bitmap size mismatch for character '", static_cast<char>(c), "'\n");
+			}
+		}
+
+		// Track maximums
+		maxHeight = std::max(maxHeight, static_cast<float>(glyphs[id].h));
+		maxAdvance = std::max(maxAdvance, static_cast<float>(glyphs[id].advance));
+
+		// Get space width
+		if (c == L' ')
+		{
+			spaceWidth = glyphs[id].advance;
+		}
 	}
 
 	Close();

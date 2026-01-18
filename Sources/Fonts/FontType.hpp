@@ -13,12 +13,17 @@ namespace acid {
  */
 class ACID_EXPORT FontType : public Resource {
 public:
-	class Glyph {
+	class Glyph
+	{
 	public:
-		double advance;
-		double x, y, w, h;
-		double pxRange;
+		float advance;
+		float x, y, w, h;
+		float pxRange;
+		uint32_t layerIndex; 
 	};
+
+	static constexpr int32_t SpaceAscii = 32;
+	static constexpr float LineHeight = 1.0f;
 	
 	/**
 	 * Creates a new font type, or finds one with the same values.
@@ -61,6 +66,9 @@ public:
 	friend const Node &operator>>(const Node &node, FontType &fontType);
 	friend Node &operator<<(Node &node, const FontType &fontType);
 
+	float GetSpaceWidth() const { return spaceWidth; }
+	std::optional<Glyph> GetCharacter(int32_t ascii) const { return GetGlyph(static_cast<wchar_t>(ascii)); }
+
 private:
 	void Open();
 	void Close();
@@ -79,5 +87,6 @@ private:
 	std::size_t size;
 	
 	float maxHeight = 0.0f, maxAdvance = 0.0f;
+	float spaceWidth = 0.0f;
 };
 }

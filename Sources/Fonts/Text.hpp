@@ -241,7 +241,7 @@ private:
 	void CompleteStructure(std::vector<Line> &lines, Line &currentLine, const Word &currentWord, float maxLength) const;
 	std::vector<VertexText> CreateQuad(const std::vector<Line> &lines) const;
 	static void AddVerticesForGlyph(float cursorX, float cursorY, const FontType::Glyph &glyph, std::vector<VertexText> &vertices);
-	static void AddVertex(float vx, float vy, float tx, float ty, std::vector<VertexText> &vertices);
+	static void AddVertex(float vx, float vy, float tx, float ty, float layer, std::vector<VertexText> &vertices);
 
 	DescriptorsHandler descriptorSet;
 	UniformHandler uniformObject;
