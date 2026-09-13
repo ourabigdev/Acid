@@ -1,7 +1,7 @@
 <img src="Documents/Acid_03.png" alt="Acid" height="130px">
 
 
-Acid is an open-source, cross-platform game engine written in modern C++17 and structured to be fast, simple, and extremely modular.
+Fork of Acid is an open-source, cross-platform game engine written in modern C++17 and structured to be fast, simple, and extremely modular.
 
 Vulkan is the sole graphics API, Vulkan can be accessed in apps with the provided Acid rendering pipeline. Metal is supported through [MoltenVK](https://github.com/KhronosGroup/MoltenVK); eventually, DirectX will be supported in a similar way.
 
